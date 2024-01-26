@@ -1,0 +1,35 @@
+TODO
+-Display smoke on face/mouth (check for compatible models)
+**-Get projected delta if stats didn't change to distribute 'would be' stat effects (smoker all stress if no stress)
+-Add variability and randomness to static numbers
+-Add trait effects to certain modifiers and rng
+-Options Menu (configurable keybinds, values, etc)
+-Refactor code to accomdate configurable options, clean up implementations
+
+Testing Cases
+-Smoker
+--All stress from cigs
+--Bonus Unhappyness
+--stressCig values
+-Non Smoker
+--basic stats from cigs
+--sickness
+-Mods
+--More Smokes StonedChange
+--Green Fire stoned effect
+--HotKey works
+--Smoke disabled while smoking
+-General
+--Eating/drinking
+--Other timed actions
+--breaking actions early
+--dying, respawning, reloading
+--all above w/ smoking active/inactive
+
+Change Notes
+-Mod renamed Smoking Overhaul -> True Smoking
+-Overhaul of code, better mod compatability, bug fixes etc
+-Dynamic burn rate w/ smoke relighting if smoke goes out
+-Eased cubic distribution of stat values over smoke duration and burnRate change (start fast end slow)
+-Moodle chevrons to indicate if smoke is burning higher or lower than its midpoint (Up = burning more, 1 = above mid point, 2 = near max, Down = burning less, 1 = below midpoint, 2 = near min)
+-Detecting projected changes from item stats

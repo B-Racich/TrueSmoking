@@ -1,0 +1,1 @@
+This is a mod for the game Project Zomboid to overhaul the smoking mechanic from a Time Blocked Action to a Passively tracked effect via Moodle. Find the mod here: https://steamcommunity.com/sharedfiles/filedetails/?id=3142474424

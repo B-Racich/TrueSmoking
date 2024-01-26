@@ -1,0 +1,12 @@
+Moodles_EN {
+    Moodles_smoking_Good_lvl4 = "A fresh smoke",
+    Moodles_smoking_Good_lvl3 = "Just lit",
+    Moodles_smoking_Good_lvl2 = "Burning nicely",
+    Moodles_smoking_Good_lvl1 = "About halfway",
+    Moodles_smoking_Bad_lvl1 = "About halfway",
+    Moodles_smoking_Bad_lvl2 = "Less than half",
+    Moodles_smoking_Bad_lvl3 = "Almost finished",
+    Moodles_smoking_Bad_lvl4 = "One last puff",
+
+    Moodles_smoking_Custom = "Enjoying a smoke (%1 %)",
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="02feecf6-daef-4bac-a664-58c28d9a9500" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/TODO.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/client/Actions/TakePuff.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/client/Patches/AutoSmoke/AutoSmokeOverrides.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/client/TrueSmoking.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/Patches/ETW/ETWFunctionsOverride.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/Patches/GreenFire/GreenFireOverrides.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/Patches/TrueSmokingItemTweaker.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/TrueSmokingOptions.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/TrueSmokingOverrides.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/server/TrueSmokingUtils.lua" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/lua/shared/Translate/EN/Moodles_EN.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/ui/bg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/ui/notSmoking.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/media/ui/smoking.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/mod.info" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contents/mods/SmokingOverhaul/poster.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/workshop.txt" beforeDir="false" afterPath="$PROJECT_DIR$/workshop.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2bTyp4ZXDgZX1rTEgQVKKwqO0pa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="02feecf6-daef-4bac-a664-58c28d9a9500" name="Changes" comment="" />
+      <created>1706253543629</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1706253543629</updated>
+    </task>
+    <servers />
+  </component>
+</project>
