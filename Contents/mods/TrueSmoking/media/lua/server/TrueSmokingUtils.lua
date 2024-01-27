@@ -153,7 +153,7 @@ function getPlayerStats(player)
     o.stonedChange = player:getModData().StonedChange or 0
 
     if checkForMod('EvolvingTraitsWorld') then
-        o.ETWaddiction = character:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction or 0
+        o.ETWaddiction = player:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction or 0
     end
 
     return o
