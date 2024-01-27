@@ -139,7 +139,7 @@ end
 --Stop smoking, kill the moodle, nil the data
 function TrueSmoking:stopSmoking()
     print('stopSmoking')
-    if getActivatedMods().contains('MoodleFramework') then
+    if getActivatedMods():contains('MoodleFramework') then
         local moodle = MF.getMoodle('smoking')
         if moodle ~= nil then
             moodle:setValue(0.5)
@@ -190,7 +190,7 @@ end
 
 function TrueSmoking.updateMoodle()
     if not TrueSmoking.isSmoking then return end
-    if getActivatedMods().contains('MoodleFramework') then
+    if getActivatedMods():contains('MoodleFramework') then
         local moodle = MF.getMoodle('smoking')
         if moodle == nil then return end
         --print('Update Moodle')
