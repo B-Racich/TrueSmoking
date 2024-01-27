@@ -139,10 +139,12 @@ end
 --Stop smoking, kill the moodle, nil the data
 function TrueSmoking:stopSmoking()
     print('stopSmoking')
-    local moodle = MF.getMoodle('smoking')
-    if moodle ~= nil then
-        moodle:setValue(0.5)
-        moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
+    if getActivatedMods().contains('MoodleFramework') then
+        local moodle = MF.getMoodle('smoking')
+        if moodle ~= nil then
+            moodle:setValue(0.5)
+            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
+        end
     end
 
     self.isSmoking = false
@@ -188,47 +190,49 @@ end
 
 function TrueSmoking.updateMoodle()
     if not TrueSmoking.isSmoking then return end
-    local moodle = MF.getMoodle('smoking')
-    if moodle == nil then return end
-    --print('Update Moodle')
-    local item = TrueSmoking.smokeItem
-    local smokeLit = TrueSmoking.smokeLit or false
-    local displayedPercentage = string.format('%.2f', item.smokeLength * 100)
+    if getActivatedMods().contains('MoodleFramework') then
+        local moodle = MF.getMoodle('smoking')
+        if moodle == nil then return end
+        --print('Update Moodle')
+        local item = TrueSmoking.smokeItem
+        local smokeLit = TrueSmoking.smokeLit or false
+        local displayedPercentage = string.format('%.2f', item.smokeLength * 100)
 
-    local isUp = false
-    local chevs = 1
+        local isUp = false
+        local chevs = 1
 
-    local lower, upper = TrueSmoking.lowerBurnLimit, TrueSmoking.upperBurnLimit
-    local diff = upper - lower
-    local mid = lower+(diff/2)
+        local lower, upper = TrueSmoking.lowerBurnLimit, TrueSmoking.upperBurnLimit
+        local diff = upper - lower
+        local mid = lower+(diff/2)
 
-    if item.burnRate > mid then
-        isUp = true
-        local d = upper - diff/5
-        if item.burnRate > d then
-            chevs = 2
+        if item.burnRate > mid then
+            isUp = true
+            local d = upper - diff/5
+            if item.burnRate > d then
+                chevs = 2
+            end
+        else
+            local d = lower + diff/10
+            if item.burnRate < d then
+                chevs = 2
+            end
         end
-    else
-        local d = lower + diff/10
-        if item.burnRate < d then
-            chevs = 2
+
+        moodle:setThresholds(0.10, 0.20, 0.35, 0.4999, 0.5001, 0.65, 0.85, 0.90)
+
+        if smokeLit then
+            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/smoking.png'))
+        else
+            chevs = 0
+            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
+            moodle:doWiggle()
         end
+        moodle:setValue(item.smokeLength)
+        moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom', displayedPercentage))
+        moodle:setBackground(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/bg.png'))
+        moodle:setChevronCount(chevs)
+        moodle:setChevronIsUp(isUp)
     end
-
-    moodle:setThresholds(0.10, 0.20, 0.35, 0.4999, 0.5001, 0.65, 0.85, 0.90)
-
-    if smokeLit then
-        moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/smoking.png'))
-    else
-        chevs = 0
-        moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
-        moodle:doWiggle()
-    end
-    moodle:setValue(item.smokeLength)
-    moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom', displayedPercentage))
-    moodle:setBackground(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/bg.png'))
-    moodle:setChevronCount(chevs)
-    moodle:setChevronIsUp(isUp)
 end
 
 function TrueSmoking.onKeyStartPressed(key)
