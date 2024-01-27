@@ -1,4 +1,4 @@
-if getActivatedMods().contains('ItemTweakerAPI') then
+if getActivatedMods():contains('ItemTweakerAPI') then
     -- DarkSlayerEX's Item Tweaker Core: an API for tweaking existing items without redefining them entirely.
     --Initializes the tables needed for the code to run
     if not ItemTweaker then  ItemTweaker = {} end
