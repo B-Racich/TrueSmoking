@@ -38,9 +38,9 @@ function setPlayerStats(player, levels, delta, percent)
             player:getModData().StonedChange = levels.stonedChange
         end
 
-        checkForMod('EvolvingTraitsWorld', function()
+        if checkForMod('EvolvingTraitsWorld') then
             player:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction = levels.ETWaddiction
-        end)
+        end
     else
         setStatCheck('stress', levels, delta, percent, (function(statChange)
             print('stress before: ',levels.stress)
