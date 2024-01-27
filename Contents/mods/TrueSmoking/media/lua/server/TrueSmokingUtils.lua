@@ -43,7 +43,9 @@ function setPlayerStats(player, levels, delta, percent)
         end)
     else
         setStatCheck('stress', levels, delta, percent, (function(statChange)
+            print('stress before: ',levels.stress)
             stats:setStress(statChange)
+            print('stress after: ', stats:getStress())
         end))
 
         setStatCheck('unhappyness', levels, delta, percent, (function(statChange)
@@ -95,25 +97,15 @@ function setPlayerStats(player, levels, delta, percent)
 end
 
 function setStatCheck(stat, levels, delta, percent, func)
-    local function helper(val, x)
-        --print(val, x)
-        if math.abs(x) > val then
-            --delta[stat] = delta[stat] - math.abs(x)
-            --check positive changes to stop if hitting 0
+    local function helper(val, statChange)
+        if math.abs(statChange) > val then
+            -- Check positive changes to stop at 0
             if delta[stat] > 0 then
-                if delta[stat] - math.abs(x) > 0 then
-                    --print(string.upper(stat),' D:B-',delta[stat],' D:A-',delta[stat] - math.abs(x))
-                    delta[stat] = delta[stat] - math.abs(x)
-                else
-                    delta[stat] = 0
-                end
+                delta[stat] = math.max(delta[stat] - math.abs(statChange), 0)
+                -- Check negative changes to stop at 0
             elseif delta[stat] < 0 then
-                if delta[stat] + math.abs(x) < 0 then
-                    --print(string.upper(stat),' D:B-',delta[stat],' D:A-',delta[stat] + math.abs(x))
-                    delta[stat] = delta[stat] + math.abs(x)
-                else
-                    delta[stat] = 0
-                end
+                print(stat,'::',delta[stat],'::',statChange)
+                delta[stat] = math.min(delta[stat] + math.abs(statChange), 0)
             end
         end
     end
@@ -140,7 +132,7 @@ function setStatCheck(stat, levels, delta, percent, func)
         elseif stat == 'foodSick' or stat == 'unhappyness' then
             helper(0.5, statChange)
         elseif stat == 'panic' then
-            helper(0.001, statChange)
+            helper(0.1, statChange)
         else
             helper(0.0001, statChange)
         end
@@ -175,22 +167,12 @@ function getStatsDelta(before, after)
         local item = TrueSmoking.smokeItem
         local x = after[stat]-before[stat]
         print(stat, ' -- ',x)
-        if isInList(stat, largeStats) then
-            if math.abs(x) > 1 then
-                return x
-            elseif isInList(stat, itemStats) and item[stat] ~= 0 then
-                return item[stat]
-            else
-                return 0
-            end
+        if math.abs(x) > (isInList(stat, largeStats) and 1 or 0.01) then
+            return x
+        elseif isInList(stat, itemStats) and item[stat] ~= 0 then
+            return item[stat]
         else
-            if math.abs(x) > 0.01 then
-                return x
-            elseif stat == 'stress' and item[stat] ~= 0 then
-                return item[stat]
-            else
-                return 0
-            end
+            return 0
         end
     end
 

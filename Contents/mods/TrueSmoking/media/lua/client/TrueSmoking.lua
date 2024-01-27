@@ -5,6 +5,7 @@ require 'MF_ISMoodle'
 require 'TrueSmokingOptions'
 require 'GreenFireOverrides'
 require 'TrueSmokingOverrides'
+require 'TrueSmokingUtils'
 
 TrueSmoking = TrueSmoking or {}
 
@@ -44,13 +45,17 @@ function TrueSmoking.smoking()
     if isSmoking then
         if smokeLit then
             if getActivatedMods():contains("MoreSmokes") then
-                SandboxVars.MoreSmokes.StonedDecreaseMulti = 0
-                getPlayer():getBodyDamage():setPanicReductionValue(0)
+                if isInList(item.onEat, TrueSmoking.funcsToHook) then
+                    SandboxVars.MoreSmokes.StonedDecreaseMulti = 0
+                    getPlayer():getBodyDamage():setPanicReductionValue(0)
+                end
             end
         else
-            if getActivatedMods().contains('MoreSmokes') then
-                SandboxVars.MoreSmokes.StonedDecreaseMulti = TrueSmoking.StonedDecreaseMulti
-                math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer:getBodyDamage():setPanicReductionValue(TrueSmoking.panicReductionBeforeSmoking))
+            if getActivatedMods():contains('MoreSmokes') then
+                if isInList(item.onEat, TrueSmoking.funcsToHook) then
+                    SandboxVars.MoreSmokes.StonedDecreaseMulti = TrueSmoking.StonedDecreaseMulti or 2
+                    math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer:getBodyDamage():setPanicReductionValue(TrueSmoking.panicReductionBeforeSmoking))
+                end
             end
         end
         if smokeLength > burnRate then
@@ -59,9 +64,6 @@ function TrueSmoking.smoking()
         if TrueSmoking.smokeItem.smokeLength <= TrueSmoking.smokeItem.burnRate then
             TrueSmoking:stopSmoking()
         end
-    end
-    if not isSmoking then
-        TrueSmoking:stopSmoking()
     end
 end
 
@@ -78,7 +80,7 @@ function TrueSmoking:smoke()
         if self.smokeLit then
             self:updateBurnRate(dt)
             --All smoking handled through OnEat_Cigarettes for stat changes
-            print('Calling OnEat w/ %: '..truncateToDecimalPlaces(self.smokeItem.smokeLength,4))
+            print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.smokeItem.smokeLength,4))
             OnEat_OverTime(self.item,  getPlayer(), self.smokeItem.smokeLength)
             self.passiveTimeMark = os.time()
         end
@@ -143,21 +145,20 @@ function TrueSmoking:stopSmoking()
         moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
     end
 
-    if getActivatedMods():contains('MoreSmokes') then
-        math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer():getBodyDamage():setPanicReductionValue(TrueSmoking.panicReductionBeforeSmoking))
-    end
-
     self.isSmoking = false
     self.smokeLit = false
     getPlayer():getModData().isSmoking = false
     self.takingPuff = false
-    self.item = nil
     self.statsDelta = nil
 
     if getActivatedMods():contains("MoreSmokes") then
-        SandboxVars.MoreSmokes.StonedDecreaseMulti = TrueSmoking.StonedDecreaseMulti
-        SandboxVars.MoreSmokes.StonedDecreaseMulti = self.StonedDecreaseMulti
+        if self.item ~= nil and isInList(self.smokeItem.onEat, self.funcsToHook) then
+            SandboxVars.MoreSmokes.StonedDecreaseMulti = self.StonedDecreaseMulti or 2
+            math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer():getBodyDamage():setPanicReductionValue(self.panicReductionBeforeSmoking))
+        end
     end
+
+    self.item = nil
 
     Events.EveryOneMinute.Remove(TrueSmoking.smoking)
 end
@@ -273,6 +274,11 @@ function TrueSmoking.start()
     TrueSmoking.lowerBurnLimit = 0.0095
 
     TrueSmoking.player = getPlayer()
+
+    TrueSmoking.funcsToHook = {'MoreSmokes.onEatJoint','MoreSmokes.onEatBlunt','MoreSmokes.onEatMixed',
+                               'MoreSmokes.onEatPipe','MoreSmokes.onEatHookah','MoreSmokes.onEatBong','MoreSmokes.onEatBluntPlus',
+                               'MoreSmokes.onEatCannabisPlus',
+                               'OnSmoke_Blunt','OnSmoke_Cannabis','OnSmoke_CannaCigar','OnSmoke_Cigar','OnSmoke_HCCannabis',}
 
     --MoreSmokes
     if getActivatedMods():contains("MoreSmokes") then

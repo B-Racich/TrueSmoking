@@ -1,4 +1,4 @@
-if getActivatedMods().contains('EvolvingTraitsWorld') then
+if getActivatedMods():contains('EvolvingTraitsWorld') then
     local SBvars = SandboxVars.EvolvingTraitsWorld;
 
     local debug = function() return EvolvingTraitsWorld.settings.GatherDebug end
