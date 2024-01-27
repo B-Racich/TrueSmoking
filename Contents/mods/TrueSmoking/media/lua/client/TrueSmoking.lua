@@ -14,6 +14,7 @@ function TrueSmoking:startSmoking()
     if not self.isSmoking then
         self.isSmoking = true
         self.smokeLit = true
+        self.panicReductionBeforeSmoking = getPlayer():getBodyDamage():getPanicReductionValue()
         getPlayer():getModData().isSmoking = true
         self.puffTimeMark = os.time();
         print('smoke event start')
@@ -28,6 +29,7 @@ function TrueSmoking.smoking()
     local burnRate = TrueSmoking.smokeItem.burnRate
     local smokeLit = TrueSmoking.smokeLit
     local item = TrueSmoking.smokeItem
+    local statsDelta = TrueSmoking.statsDelta
 
     TrueSmoking.hasSmokerTrait = getPlayer():HasTrait('Smoker')
 
@@ -43,6 +45,12 @@ function TrueSmoking.smoking()
         if smokeLit then
             if getActivatedMods():contains("MoreSmokes") then
                 SandboxVars.MoreSmokes.StonedDecreaseMulti = 0
+                getPlayer():getBodyDamage():setPanicReductionValue(0)
+            end
+        else
+            if getActivatedMods().contains('MoreSmokes') then
+                SandboxVars.MoreSmokes.StonedDecreaseMulti = TrueSmoking.StonedDecreaseMulti
+                math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer:getBodyDamage():setPanicReductionValue(TrueSmoking.panicReductionBeforeSmoking))
             end
         end
         if smokeLength > burnRate then
@@ -135,6 +143,10 @@ function TrueSmoking:stopSmoking()
         moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
     end
 
+    if getActivatedMods():contains('MoreSmokes') then
+        math.min(getPlayer():getBodyDamage():setPanicReductionValue(0.06),getPlayer():getBodyDamage():setPanicReductionValue(TrueSmoking.panicReductionBeforeSmoking))
+    end
+
     self.isSmoking = false
     self.smokeLit = false
     getPlayer():getModData().isSmoking = false
@@ -143,6 +155,7 @@ function TrueSmoking:stopSmoking()
     self.statsDelta = nil
 
     if getActivatedMods():contains("MoreSmokes") then
+        SandboxVars.MoreSmokes.StonedDecreaseMulti = TrueSmoking.StonedDecreaseMulti
         SandboxVars.MoreSmokes.StonedDecreaseMulti = self.StonedDecreaseMulti
     end
 

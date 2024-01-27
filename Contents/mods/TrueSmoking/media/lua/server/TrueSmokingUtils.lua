@@ -106,6 +106,7 @@ end
 
 function setStatCheck(stat, levels, delta, percent, func)
     local function helper(val, x)
+        print(val, x)
         if math.abs(x) > val then
             --delta[stat] = delta[stat] - math.abs(x)
             --check positive changes to stop if hitting 0
@@ -116,7 +117,6 @@ function setStatCheck(stat, levels, delta, percent, func)
                 else
                     delta[stat] = 0
                 end
-            -- check negative changes to stop if hitting 0
             elseif delta[stat] < 0 then
                 if delta[stat] + math.abs(x) < 0 then
                     --print(string.upper(stat),' D:B-',delta[stat],' D:A-',delta[stat] + math.abs(x))
@@ -126,7 +126,8 @@ function setStatCheck(stat, levels, delta, percent, func)
                 end
             end
         end
-
+    end
+    print(stat,' :: ',delta[stat])
     if math.abs(delta[stat]) > 0 then
         local statBefore = levels[stat]
         local statAfter = cubicEaseOut(levels[stat], (levels[stat] + delta[stat]), percent)
@@ -135,10 +136,6 @@ function setStatCheck(stat, levels, delta, percent, func)
             if stat == 'stress' or stat == 'stressFromCig' or stat == 'timeSinceLastSmoke' then
                 statAfter = cubicEaseOut(levels[stat], 0, percent)
             end
-        end
-
-        if stat == 'panic' then
-            statAfter = cubicEaseOut(levels[stat], (levels[stat] + delta[stat]), percent)
         end
 
         if statAfter < 0 then statAfter = 0 end
@@ -151,9 +148,9 @@ function setStatCheck(stat, levels, delta, percent, func)
         if stat == 'stress' and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' then
             helper(0.0001, statChange)
         elseif stat == 'foodSick' or stat == 'unhappyness' then
-            helper(0.5, statChange) end
-        elseif stat == 'panic' then
             helper(0.5, statChange)
+        elseif stat == 'panic' then
+            helper(0.001, statChange)
         else
             helper(0.0001, statChange)
         end
@@ -226,7 +223,6 @@ end
 
 function checkForMod(mod, func)
     if getActivatedMods():contains(mod) then
-        print('mod found: ',mod)
         return function(...)
             func(...)
         end
