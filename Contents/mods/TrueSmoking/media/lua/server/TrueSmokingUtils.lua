@@ -11,18 +11,6 @@ function truncateToDecimalPlaces(value, decimalPlaces)
     return math.floor(value * multiplier) / multiplier
 end
 
-function cubicEaseInOut(val, target, duration)
-    local t = math.max(0, math.min(1, val / duration))
-    t = t * 2 -- Scale t to make it cover the full range [0, 2]
-
-    if t < 1 then
-        return val + 0.5 * t^3 * (target - val)
-    else
-        t = 2 - t
-        return val + 0.5 * (2 - t^3) * (target - val)
-    end
-end
-
 function cubicEaseOut(val, tar, percent)
     local t = 1 - percent
     local x = tar + (1 - t^3) * (val - tar)
@@ -46,7 +34,7 @@ function setPlayerStats(player, levels, delta, percent)
         stats:setThirst(levels.thirst)
         stats:setPanic(levels.panic)
 
-        if getActivatedMods():contains("MoreSmokes") then
+        if checkForMod("MoreSmokes") then
             player:getModData().StonedChange = levels.stonedChange
         end
 
@@ -90,23 +78,25 @@ function setPlayerStats(player, levels, delta, percent)
             stats:setPanic(statChange)
         end))
 
-        checkForMod('MoreSmokes', (function()
+        if checkForMod('MoreSmokes') then
             setStatCheck('stonedChange', levels, delta, percent, (function(statChange)
+                print('Level Before: ',player:getModData().StonedChange)
                 player:getModData().StonedChange = statChange
+                print('Level After: ',player:getModData().StonedChange)
             end))
-        end))
+        end
 
-        checkForMod('EvolvingTraitsWorld', (function()
+        if checkForMod('EvolvingTraitsWorld') then
             setStatCheck('stonedChange', levels, delta, percent, (function(statChange)
                 player:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction = statChange
             end))
-        end))
+        end
     end
 end
 
 function setStatCheck(stat, levels, delta, percent, func)
     local function helper(val, x)
-        print(val, x)
+        --print(val, x)
         if math.abs(x) > val then
             --delta[stat] = delta[stat] - math.abs(x)
             --check positive changes to stop if hitting 0
@@ -170,9 +160,9 @@ function getPlayerStats(player)
     o.foodSick = player:getBodyDamage():getFoodSicknessLevel()
     o.stonedChange = player:getModData().StonedChange or 0
 
-    checkForMod('EvolvingTraitsWorld', (function()
+    if checkForMod('EvolvingTraitsWorld') then
         o.ETWaddiction = character:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction or 0
-    end))
+    end
 
     return o
 end
@@ -184,6 +174,7 @@ function getStatsDelta(before, after)
         local itemStats = {'boredom','unhappyness'}
         local item = TrueSmoking.smokeItem
         local x = after[stat]-before[stat]
+        print(stat, ' -- ',x)
         if isInList(stat, largeStats) then
             if math.abs(x) > 1 then
                 return x
@@ -215,18 +206,14 @@ function getStatsDelta(before, after)
     o.foodSick = helper('foodSick')
     o.stonedChange = helper('stonedChange')
 
-    checkForMod('EvolvingTraitsWorld', (function()
+    if checkForMod('EvolvingTraitsWorld') then
         o.ETWaddiction = helper('ETWaddiction')
-    end))
+    end
     return o
 end
 
-function checkForMod(mod, func)
-    if getActivatedMods():contains(mod) then
-        return function(...)
-            func(...)
-        end
-    end
+function checkForMod(mod)
+    return getActivatedMods():contains(mod)
 end
 
 function callModFunction(func)
