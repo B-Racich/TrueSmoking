@@ -3,7 +3,6 @@ require 'TimedActions/ISEatFoodAction'
 require 'TrueSmoking'
 require 'TrueSmokingUtils'
 require 'ETWFunctionsOverride'
-require 'GreenFireOverrides'
 
 TrueSmoking = TrueSmoking or {}
 

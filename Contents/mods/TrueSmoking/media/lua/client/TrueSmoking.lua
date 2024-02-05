@@ -1,8 +1,6 @@
 require 'TimedActions/ISBaseTimedAction'
 require 'ISUI/ISInventoryPaneContextMenu'
 
-
-require 'GreenFireOverrides'
 require 'TrueSmokingOverrides'
 require 'TrueSmokingUtils'
 
@@ -32,14 +30,6 @@ function TrueSmoking.smoking()
     local item = TrueSmoking.smokeItem
 
     TrueSmoking.hasSmokerTrait = getPlayer():HasTrait('Smoker')
-
-     if getActivatedMods():contains("jiggasGreenfireMod") then
-         if TrueSmoking.player:getModData().GreenFireSmokeHalf and smokeLength < 0.6 and smokeLength > 0.4 then
-             TrueSmoking:stopSmoking()
-             TrueSmoking.player:getModData().GreenFireSmokeHalf = false
-             --GreenFireCoughSmoke()
-         end
-     end
 
     if isSmoking then
         if smokeLit then
