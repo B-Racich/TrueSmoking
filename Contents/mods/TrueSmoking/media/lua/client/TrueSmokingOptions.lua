@@ -60,6 +60,9 @@ function TrueSmoking.Options.init()
         ModOptions:loadFile()
 
         Events.OnPreMapLoad.Add(function()
+            TrueSmoking.Options.OverrideSmokeLength = SandboxVars.TrueSmoking.OverrideSmokeLength
+            TrueSmoking.Options.SmokeLength = SandboxVars.TrueSmoking.SmokeLength
+
             TrueSmoking.Options.SmokePuffingIncrease = SandboxVars.TrueSmoking.SmokePuffingIncrease
             TrueSmoking.Options.SmokePuffingDecrease = SandboxVars.TrueSmoking.SmokePuffingDecrease
             TrueSmoking.Options.SmokePuffingDecreaseRunning = SandboxVars.TrueSmoking.SmokePuffingDecreaseRunning

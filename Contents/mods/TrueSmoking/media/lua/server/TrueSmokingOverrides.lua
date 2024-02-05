@@ -86,12 +86,8 @@ function OnEat_OverTime(food, character, percent)
     end
 
     if getActivatedMods():contains("EvolvingTraitsWorld") then
-        ETWOnEat(character, TrueSmoking.smokeItem.burnRate)
+        ETWOnEat(character, TrueSmoking.puffPercent)
     end
 
-    if modItem == 'GreenFireItem' then
-        character:getModData().GreenFireSmokeHalf = false
-        --SmokingOverhaul:GreenFireUpdateStoner()
-    end
     setPlayerStats(character, current, delta, percent)
 end

@@ -30,7 +30,8 @@ function TrueSmoking.Moodle.update()
         --print('Update Moodle')
         local item = TrueSmoking.smokeItem
         local smokeLit = TrueSmoking.smokeLit or false
-        local displayedPercentage = string.format('%.2f', item.smokeLength * 100)
+        local percentVal = item.smokeLength/item.originalSmokeLength
+        local displayedPercentage = string.format('%.2f', percentVal * 100)
 
         local isUp = false
         local chevs = 1
@@ -61,7 +62,7 @@ function TrueSmoking.Moodle.update()
             moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
             moodle:doWiggle()
         end
-        moodle:setValue(item.smokeLength)
+        moodle:setValue(percentVal)
         moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom',truncateToDecimalPlaces(item.burnRate,4), displayedPercentage))
         moodle:setBackground(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/bg.png'))
         moodle:setChevronCount(chevs)

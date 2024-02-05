@@ -72,7 +72,7 @@ function TrueSmoking:smoke()
             self:updateBurnRate(dt)
             --All smoking handled through OnEat_Cigarettes for stat changes
             print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.smokeItem.smokeLength,4))
-            OnEat_OverTime(self.item,  getPlayer(), self.smokeItem.smokeLength)
+            OnEat_OverTime(self.item,  getPlayer(), self.puffPercent)
             self.passiveTimeMark = os.time()
         end
     end
@@ -96,6 +96,7 @@ function TrueSmoking:updateBurnRate()
     end
     -- Calculate new smokeLength
     self.smokeItem.smokeLength = self.smokeItem.smokeLength - self.smokeItem.burnRate
+    self.puffPercent = self.smokeItem.smokeLength / self.smokeItem.originalSmokeLength
 end
 
 function TrueSmoking:lightSmoke()
@@ -162,8 +163,15 @@ function TrueSmoking:getSmokeInfo(item)
     self.smokeItem.fatigue = item:getFatigueChange() or 0
     self.smokeItem.thirst = item:getThirstChange() or 0
 
-    self.smokeItem.smokeLength = item:getModData().SmokeLength or 1.0
-    self.smokeItem.burnRate = item:getModData().BurnRate or 0.0175
+    local smokeLength = item:getModData().SmokeLength or self.Options.SmokeLength
+    local override = self.Options.OverrideSmokeLength
+
+    if override then smokeLength = self.Options.SmokeLength end
+    self.smokeItem.smokeLength = smokeLength
+    self.smokeItem.originalSmokeLength = smokeLength
+
+    --TODO Add variability here
+    self.smokeItem.burnRate = 0.0175
 end
 
 --Check for blocking actions on the character
@@ -218,7 +226,6 @@ function TrueSmoking.start()
                                'MoreSmokes.onEatCannabisPlus',
                                'OnSmoke_Blunt','OnSmoke_Cannabis','OnSmoke_CannaCigar','OnSmoke_Cigar','OnSmoke_HCCannabis',}
 
-    --MoreSmokes
     if getActivatedMods():contains("MoreSmokes") then
         TrueSmoking.StonedDecreaseMulti = SandboxVars.MoreSmokes.StonedDecreaseMulti or 2
     end

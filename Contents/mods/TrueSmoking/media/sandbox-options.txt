@@ -1,5 +1,24 @@
 VERSION = 1,
 
+option TrueSmoking.OverrideSmokeLength
+{
+    type = boolean,
+	default = false,
+	page = TrueSmoking, translation=TrueSmoking_OverrideSmokeLength,
+}
+option TrueSmoking.SmokeLength
+{
+    type = double,
+    min = 0.0000,
+    max = 1000.0,
+    default = 1.0,
+    page = TrueSmoking, translation=TrueSmoking_SmokeLength,
+}
+
+
+
+
+
 option TrueSmoking.SmokePuffingIncrease
 {
     type = double,
