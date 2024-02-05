@@ -1,0 +1,17 @@
+UI_EN = {
+    -- Header text
+    UI_optionscreen_binding_True Smoking = "True Smoking",
+    -- Key bindings
+    UI_optionscreen_binding_Take Puff/Relight = "Take Puff",
+    UI_optionscreen_binding_Stop Smoking = "Stop Smoking",
+    -- Options
+    UI_TrueSmoking_PassiveSmoking = "Passive Smoking",
+    UI_TrueSmoking_PassiveSmoking_tooltip = "Option to toggle passive smoking by the character, time settings are configured in the sandbox",
+    UI_TrueSmoking_PassiveSmokingMinTime = "Passive Smoking Minimum Trigger Time",
+    UI_TrueSmoking_PassiveSmokingMinTime_tooltip = "The minimum amount of time before triggering passive smoking",
+    UI_TrueSmoking_PassiveSmokingMaxTime = "Passive Smoking Maximum Trigger Time",
+    UI_TrueSmoking_PassiveSmokingMaxTime_tooltip = "The maximum amount of time before triggering passive smoking",
+    -- Debug
+    UI_TrueSmoking_DEBUG = "Debug Console Text"
+    UI_TrueSmoking_DEBUG_tooltip = "Enable Debug Console text"
+}

@@ -1,8 +1,7 @@
 require 'TimedActions/ISBaseTimedAction'
 require 'ISUI/ISInventoryPaneContextMenu'
 
-require 'MF_ISMoodle'
-require 'TrueSmokingOptions'
+
 require 'GreenFireOverrides'
 require 'TrueSmokingOverrides'
 require 'TrueSmokingUtils'
@@ -18,6 +17,7 @@ function TrueSmoking:startSmoking()
         self.panicReductionBeforeSmoking = getPlayer():getBodyDamage():getPanicReductionValue()
         getPlayer():getModData().isSmoking = true
         self.puffTimeMark = os.time();
+
         print('smoke event start')
         Events.EveryOneMinute.Add(TrueSmoking.smoking)
     end
@@ -30,7 +30,6 @@ function TrueSmoking.smoking()
     local burnRate = TrueSmoking.smokeItem.burnRate
     local smokeLit = TrueSmoking.smokeLit
     local item = TrueSmoking.smokeItem
-    local statsDelta = TrueSmoking.statsDelta
 
     TrueSmoking.hasSmokerTrait = getPlayer():HasTrait('Smoker')
 
@@ -69,7 +68,9 @@ end
 
 function TrueSmoking:smoke()
     --Try to take a passivePuff
-    self:takePuff()
+    if self.Options.PassiveSmoking then
+        self:takePuff()
+    end
 
     local dt = os.difftime(os.time(), self.passiveTimeMark or os.time())
 
@@ -85,22 +86,20 @@ function TrueSmoking:smoke()
             self.passiveTimeMark = os.time()
         end
     end
-    self:updateMoodle()
 end
 
 function TrueSmoking:updateBurnRate()
     local burnRate = self.smokeItem.burnRate
     if self.takingPuff then
-        local smoothFactor = 0.575
         print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
-        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.upperBurnLimit*1.25, smoothFactor)
+        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMaxBurnLimit, self.Options.SmokePuffingIncrease)
     else
-        local smoothFactor = 0.685
-        if getPlayer():isRunning() or getPlayer():isSprinting() then smoothFactor = 0.2 end
+        local smoothFactor = self.Options.SmokePuffingDecrease
+        if getPlayer():isRunning() or getPlayer():isSprinting() then smoothFactor = self.Options.SmokePuffingDecreaseRunning end
         print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
-        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.lowerBurnLimit/2, smoothFactor)
+        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMinBurnLimit, smoothFactor)
         -- Check if the smoke is 'notLit'
-        if self.smokeItem.burnRate < self.lowerBurnLimit then
+        if self.Options.SmokeRelighting and self.smokeItem.burnRate < self.Options.SmokeMinBurnLimit then
             print('Smoke is out')
             self.smokeLit = false
         end
@@ -130,7 +129,7 @@ function TrueSmoking:takePuff()
     then
         local time = os.difftime(os.time(), self.puffTimeMark)
         --TODO add in trait based chance to keep smoke going
-        if time > ZombRand(20,40) then
+        if time > ZombRand(self.Options.PassiveSmokingMinTime,self.Options.PassiveSmokingMaxTime) then
             ISTimedActionQueue.add(TakePuff:new(self.player, self.item, self, true))
         end
     end
@@ -139,13 +138,8 @@ end
 --Stop smoking, kill the moodle, nil the data
 function TrueSmoking:stopSmoking()
     print('stopSmoking')
-    if getActivatedMods():contains('MoodleFramework') then
-        local moodle = MF.getMoodle('smoking')
-        if moodle ~= nil then
-            moodle:setValue(0.5)
-            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
-        end
-    end
+
+    self.Moodle.stop()
 
     self.isSmoking = false
     self.smokeLit = false
@@ -188,53 +182,6 @@ function TrueSmoking:canSmoke()
             and not self.player:isAiming() and not self.player:isAsleep() and not self.player:isPerformingAnAction()
 end
 
-function TrueSmoking.updateMoodle()
-    if not TrueSmoking.isSmoking then return end
-    if getActivatedMods():contains('MoodleFramework') then
-        local moodle = MF.getMoodle('smoking')
-        if moodle == nil then return end
-        --print('Update Moodle')
-        local item = TrueSmoking.smokeItem
-        local smokeLit = TrueSmoking.smokeLit or false
-        local displayedPercentage = string.format('%.2f', item.smokeLength * 100)
-
-        local isUp = false
-        local chevs = 1
-
-        local lower, upper = TrueSmoking.lowerBurnLimit, TrueSmoking.upperBurnLimit
-        local diff = upper - lower
-        local mid = lower+(diff/2)
-
-        if item.burnRate > mid then
-            isUp = true
-            local d = upper - diff/5
-            if item.burnRate > d then
-                chevs = 2
-            end
-        else
-            local d = lower + diff/10
-            if item.burnRate < d then
-                chevs = 2
-            end
-        end
-
-        moodle:setThresholds(0.10, 0.20, 0.35, 0.4999, 0.5001, 0.65, 0.85, 0.90)
-
-        if smokeLit then
-            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/smoking.png'))
-        else
-            chevs = 0
-            moodle:setPicture(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/notSmoking.png'))
-            moodle:doWiggle()
-        end
-        moodle:setValue(item.smokeLength)
-        moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom', displayedPercentage))
-        moodle:setBackground(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/bg.png'))
-        moodle:setChevronCount(chevs)
-        moodle:setChevronIsUp(isUp)
-    end
-end
-
 function TrueSmoking.onKeyStartPressed(key)
     if TrueSmoking.player then
         if TrueSmoking.isSmoking and TrueSmoking.smokeLit and key == TrueSmoking.Options.keySmoke.key then
@@ -274,9 +221,6 @@ function TrueSmoking.start()
     TrueSmoking.statsBefore = TrueSmoking.statsBefore or nil
     TrueSmoking.statsAfter = TrueSmoking.statsAfter or nil
 
-    TrueSmoking.upperBurnLimit = 0.0305
-    TrueSmoking.lowerBurnLimit = 0.0095
-
     TrueSmoking.player = getPlayer()
 
     TrueSmoking.funcsToHook = {'MoreSmokes.onEatJoint','MoreSmokes.onEatBlunt','MoreSmokes.onEatMixed',
@@ -289,12 +233,7 @@ function TrueSmoking.start()
         TrueSmoking.StonedDecreaseMulti = SandboxVars.MoreSmokes.StonedDecreaseMulti or 2
     end
 
-    if getActivatedMods():contains('MoodleFramework') then
-        MF.createMoodle('smoking')
-        print('create moodle')
-    end
-
-    Events.EveryOneMinute.Add(TrueSmoking.updateMoodle)
+    TrueSmoking.Moodle.start()
 
     --Keybinds
     Events.OnKeyStartPressed.Add(TrueSmoking.onKeyStartPressed)
@@ -305,11 +244,17 @@ end
 
 function TrueSmoking.stop()
     TrueSmoking:stopSmoking()
-    Events.EveryOneMinute.Remove(TrueSmoking.updateMoodle)
+    TrueSmoking.Moodle.stop()
+    Events.EveryOneMinute.Remove(TrueSmoking.Moodle.update)
     Events.OnKeyStartPressed.Remove(TrueSmoking.onKeyStartPressed)
     Events.OnFillInventoryObjectContextMenu.Remove(TrueSmoking.toggleSmokeMenuOption)
+end
+
+function TrueSmoking.init()
+    TrueSmoking.Options.init()
 end
 
 --Events.OnGameBoot.Add(init)
 Events.OnCreatePlayer.Add(TrueSmoking.start)
 Events.OnPlayerDeath.Add(TrueSmoking.stop)
+Events.OnGameBoot.Add(TrueSmoking.init)

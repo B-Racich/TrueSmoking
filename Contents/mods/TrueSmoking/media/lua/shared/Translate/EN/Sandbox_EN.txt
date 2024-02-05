@@ -1,0 +1,24 @@
+Sandbox_EN = {
+	Sandbox_TrueSmoking = "True Smoking - Options",
+
+    Sandbox_TrueSmoking_SmokePuffingIncrease = "Burn rate increase",
+    Sandbox_TrueSmoking_SmokePuffingIncrease_tooltip = "How much the burn rate increases when puffing (Lower = Faster)",
+
+    Sandbox_TrueSmoking_SmokePuffingDecrease = "Burn rate decrease",
+    Sandbox_TrueSmoking_SmokePuffingDecrease_tooltip = "How much the burn rate decreases when not puffing (Lower = Faster)",
+
+    Sandbox_TrueSmoking_SmokePuffingDecreaseRunning = "Burn rate decrease while running",
+    Sandbox_TrueSmoking_SmokePuffingDecreaseRunning_tooltip = "How much the burn rate decreases when running (Lower = Faster)",
+
+
+
+
+    Sandbox_TrueSmoking_SmokeRelighting = "Smoke Relighting",
+    Sandbox_TrueSmoking_SmokeRelighting_tooltip = "Option to enable relighting of the smoke if it drops below 'Minimum burn limit''",
+
+    Sandbox_TrueSmoking_SmokeMinBurnLimit = "Minimum burn limit",
+    Sandbox_TrueSmoking_SmokeMinBurnLimit_tooltip = "The minimum value the burn rate can reach (How much of the smoke is burnt each tick)",
+
+    Sandbox_TrueSmoking_SmokeMaxBurnLimit = "Maximum burn limit",
+    Sandbox_TrueSmoking_SmokeMaxBurnLimit_tooltip = "The maximum value the burn rate can reach when puffing (How much of the smoke is burnt each tick)",
+}

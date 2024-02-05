@@ -8,5 +8,5 @@ Moodles_EN {
     Moodles_smoking_Bad_lvl3 = "Almost finished",
     Moodles_smoking_Bad_lvl4 = "One last puff",
 
-    Moodles_smoking_Custom = "Enjoying a smoke (%1 %)",
+    Moodles_smoking_Custom = "Smoke is currently burning @ (%1) with (%2 %) left",
 }

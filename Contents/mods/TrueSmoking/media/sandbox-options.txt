@@ -1,0 +1,74 @@
+VERSION = 1,
+
+option TrueSmoking.PassiveSmokingMinTime
+{
+    type = integer,
+    min = 0,
+    max = 10000,
+    default = 20,
+    page = TrueSmoking, translation=TrueSmoking_PassiveSmokingMinTime,
+}
+option TrueSmoking.PassiveSmokingMaxTime
+{
+    type = integer,
+    min = 0,
+    max = 10000,
+    default = 40,
+    page = TrueSmoking, translation=TrueSmoking_PassiveSmokingMaxTime,
+}
+
+
+
+
+
+option TrueSmoking.SmokePuffingIncrease
+{
+    type = double,
+    min = 0.0,
+    max = 1.0,
+    default = 0.575,
+    page = TrueSmoking, translation=TrueSmoking_SmokePuffingIncrease,
+}
+option TrueSmoking.SmokePuffingDecrease
+{
+    type = double,
+    min = 0.0,
+    max = 1.0,
+    default = 0.685,
+    page = TrueSmoking, translation=TrueSmoking_SmokePuffingDecrease,
+}
+option TrueSmoking.SmokePuffingDecreaseRunning
+{
+    type = double,
+    min = 0.0,
+    max = 1.0,
+    default = 0.2,
+    page = TrueSmoking, translation=TrueSmoking_SmokePuffingDecrease,
+}
+
+
+
+
+
+option TrueSmoking.SmokeRelighting
+{
+	type = boolean,
+	default = true,
+	page = TrueSmoking, translation=TrueSmoking_SmokeRelighting,
+}
+option TrueSmoking.SmokeMinBurnLimit
+{
+    type = double,
+    min = 0.0,
+    max = 1.0,
+    default = 0.0095,
+    page = TrueSmoking, translation=TrueSmoking_SmokeMinBurnLimit,
+}
+option TrueSmoking.SmokeMaxBurnLimit
+{
+    type = double,
+    min = 0.0,
+    max = 1.0,
+    default = 0.0305,
+    page = TrueSmoking, translation=TrueSmoking_SmokeMaxBurnLimit,
+}
