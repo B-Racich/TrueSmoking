@@ -19,8 +19,8 @@ function TrueSmoking.Options.init()
     if ModOptions and ModOptions.getInstance then
         local function onModOptionsApply(optionValues)
             TrueSmoking.Options.PassiveSmoking = optionValues.settings.options.PassiveSmoking;
-            TrueSmoking.Options.PassiveSmokingMinTime = optionValues.settings.options.PassiveSmokingMinTime
-            TrueSmoking.Options.PassiveSmokingMaxTime = optionValues.settings.options.PassiveSmokingMaxTime
+            TrueSmoking.Options.PassiveSmokingMinTime = (optionValues.settings.options.PassiveSmokingMinTime*10)-10
+            TrueSmoking.Options.PassiveSmokingMaxTime = (optionValues.settings.options.PassiveSmokingMaxTime*10)-10
         end
 
         ModOptions:AddKeyBinding('[True Smoking]', TrueSmoking.Options.keySmoke)

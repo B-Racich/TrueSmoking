@@ -97,7 +97,7 @@ function TrueSmoking:updateBurnRate()
         local smoothFactor = self.Options.SmokePuffingDecrease
         if getPlayer():isRunning() or getPlayer():isSprinting() then smoothFactor = self.Options.SmokePuffingDecreaseRunning end
         print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
-        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMinBurnLimit, smoothFactor)
+        self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMinBurnLimit*0.95, smoothFactor)
         -- Check if the smoke is 'notLit'
         if self.Options.SmokeRelighting and self.smokeItem.burnRate < self.Options.SmokeMinBurnLimit then
             print('Smoke is out')

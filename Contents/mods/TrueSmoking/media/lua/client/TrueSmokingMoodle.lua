@@ -62,7 +62,7 @@ function TrueSmoking.Moodle.update()
             moodle:doWiggle()
         end
         moodle:setValue(item.smokeLength)
-        moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom',item.burnRate, displayedPercentage))
+        moodle:setDescription(moodle:getGoodBadNeutral(),moodle:getLevel(),getText('Moodles_smoking_Custom',truncateToDecimalPlaces(item.burnRate,4), displayedPercentage))
         moodle:setBackground(moodle:getGoodBadNeutral(),moodle:getLevel(),getTexture('media/ui/Moodles/bg.png'))
         moodle:setChevronCount(chevs)
         moodle:setChevronIsUp(isUp)
