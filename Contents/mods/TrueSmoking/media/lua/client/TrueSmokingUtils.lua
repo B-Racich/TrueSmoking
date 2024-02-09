@@ -11,10 +11,10 @@ function truncateToDecimalPlaces(value, decimalPlaces)
     return math.floor(value * multiplier) / multiplier
 end
 
-function cubicEaseOut(val, tar, percent)
+function cubicEaseOut(val, tar, percent, stat)
     local t = 1 - percent
     local x = tar + (1 - t^3) * (val - tar)
-    --print('val: ',val,' tar: ',tar,' x: ',x,' %: ',1-percent)
+    --print('val: ',truncateToDecimalPlaces(val,6),' tar: ',truncateToDecimalPlaces(tar,6),' x: ',truncateToDecimalPlaces(x,6),' %: ',truncateToDecimalPlaces(1-percent,6), ' stat:: ', stat)
     return x
 end
 
@@ -24,9 +24,13 @@ function setPlayerStats(player, levels, delta, percent)
     local body = player:getBodyDamage()
 
     if delta == nil then
+        --print('DELTA NILLLLLLL')
+        --print('stress before:: ',stats:getStress())
         stats:setStress(levels.stress)
+        --print('stess after::',stats:getStress())
         body:setUnhappynessLevel(levels.unhappyness)
-        stats:setStressFromCigarettes(levels.stressFromCig)
+        --stats:setStressFromCigarettes(levels.stressFromCig)
+        stats:setStressFromCigarettes(0)
         player:setTimeSinceLastSmoke(levels.timeSinceLastSmoke)
         body:setFoodSicknessLevel(levels.foodSick)
         body:setBoredomLevel(levels.boredom)
@@ -43,9 +47,8 @@ function setPlayerStats(player, levels, delta, percent)
         end
     else
         setStatCheck('stress', levels, delta, percent, (function(statChange)
-            print('stress before: ',levels.stress)
             stats:setStress(statChange)
-            print('stress after: ', stats:getStress())
+            --print('stress was set w/ ',statChange)
         end))
 
         setStatCheck('unhappyness', levels, delta, percent, (function(statChange)
@@ -82,9 +85,9 @@ function setPlayerStats(player, levels, delta, percent)
 
         if checkForMod('MoreSmokes') then
             setStatCheck('stonedChange', levels, delta, percent, (function(statChange)
-                print('Level Before: ',player:getModData().StonedChange)
+                --print('Level Before: ',player:getModData().StonedChange)
                 player:getModData().StonedChange = statChange
-                print('Level After: ',player:getModData().StonedChange)
+                --print('Level After: ',player:getModData().StonedChange)
             end))
         end
 
@@ -97,27 +100,26 @@ function setPlayerStats(player, levels, delta, percent)
 end
 
 function setStatCheck(stat, levels, delta, percent, func)
-    local function helper(val, statChange)
-        if math.abs(statChange) > val then
+    local function helper(check, statChange)
+        if math.abs(statChange) > check then
             -- Check positive changes to stop at 0
             if delta[stat] > 0 then
+                --print(stat,'::',delta[stat],'::',statChange)
                 delta[stat] = math.max(delta[stat] - math.abs(statChange), 0)
                 -- Check negative changes to stop at 0
             elseif delta[stat] < 0 then
-                print(stat,'::',delta[stat],'::',statChange)
+                --print(stat,'::',delta[stat],'::',statChange)
                 delta[stat] = math.min(delta[stat] + math.abs(statChange), 0)
             end
         end
     end
-    print(stat,' :: ',delta[stat])
     if math.abs(delta[stat]) > 0 then
         local statBefore = levels[stat]
-        local statAfter = cubicEaseOut(levels[stat], (levels[stat] + delta[stat]), percent)
-
-        if TrueSmoking.hasSmokerTrait and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' then
-            if stat == 'stress' or stat == 'stressFromCig' or stat == 'timeSinceLastSmoke' then
-                statAfter = cubicEaseOut(levels[stat], 0, percent)
-            end
+        local statAfter = statBefore
+        if TrueSmoking.hasSmokerTrait and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' and (stat == 'stress' or stat == 'stressFromCig' or stat == 'timeSinceLastSmoke') then
+            statAfter = cubicEaseOut(levels[stat], 0, percent, stat)
+        else
+            statAfter = cubicEaseOut(levels[stat], (levels[stat] + delta[stat]), percent, stat)
         end
 
         if statAfter < 0 then statAfter = 0 end
@@ -125,6 +127,7 @@ function setStatCheck(stat, levels, delta, percent, func)
         local statChange = statAfter-statBefore
 
         func(statAfter)
+        --print('STAT::',stat,' BEFORE::',truncateToDecimalPlaces(levels[stat],6),' DELTA::',truncateToDecimalPlaces(statChange,6),' AFTER::',truncateToDecimalPlaces(statAfter,6))
 
         --CHECKS FOR VARIOUS STATS TO ENSURE CHANGES
         if stat == 'stress' and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' then
@@ -166,10 +169,12 @@ function getStatsDelta(before, after)
         local itemStats = {'boredom','unhappyness'}
         local item = TrueSmoking.smokeItem
         local x = after[stat]-before[stat]
-        print(stat, ' -- ',x)
+        --print(stat, ' -- ',x)
         if math.abs(x) > (isInList(stat, largeStats) and 1 or 0.01) then
+            --print('Using projected stats ', stat)
             return x
         elseif isInList(stat, itemStats) and item[stat] ~= 0 then
+            --print('Getting Item stats ',stat)
             return item[stat]
         else
             return 0

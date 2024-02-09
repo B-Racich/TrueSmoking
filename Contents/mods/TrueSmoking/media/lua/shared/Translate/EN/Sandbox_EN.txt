@@ -2,7 +2,7 @@ Sandbox_EN = {
 	Sandbox_TrueSmoking = "True Smoking - Options",
 
     Sandbox_TrueSmoking_OverrideSmokeLength = "Override ALL Smoke Length",
-    Sandbox_TrueSmoking_OverrideSmokeLength_tooltip = "Overrides ALL smoke lengths to the set value even",
+    Sandbox_TrueSmoking_OverrideSmokeLength_tooltip = "Overrides ALL smoke lengths to the set value",
 
     Sandbox_TrueSmoking_SmokeLength = "Smoke Length Value",
     Sandbox_TrueSmoking_SmokeLength_tooltip = "The default smoke length value to use when the item does not contain one (Higher = longer)",

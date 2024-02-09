@@ -69,9 +69,9 @@ function TrueSmoking:smoke()
         return
     elseif dt >= 2 then
         if self.smokeLit then
-            self:updateBurnRate(dt)
+            self:updateBurnRate()
             --All smoking handled through OnEat_Cigarettes for stat changes
-            print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.smokeItem.smokeLength,4))
+            print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.puffPercent,4))
             OnEat_OverTime(self.item,  getPlayer(), self.puffPercent)
             self.passiveTimeMark = os.time()
         end
