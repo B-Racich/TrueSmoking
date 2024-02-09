@@ -71,7 +71,7 @@ function TrueSmoking:smoke()
         if self.smokeLit then
             self:updateBurnRate()
             --All smoking handled through OnEat_Cigarettes for stat changes
-            print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.puffPercent,4))
+            --print('Calling OnEat_OverTime w/ SmokeLength: '..truncateToDecimalPlaces(self.puffPercent,4))
             OnEat_OverTime(self.item,  getPlayer(), self.puffPercent)
             self.passiveTimeMark = os.time()
         end
@@ -81,12 +81,12 @@ end
 function TrueSmoking:updateBurnRate()
     local burnRate = self.smokeItem.burnRate
     if self.takingPuff then
-        print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
+        --print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
         self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMaxBurnLimit, self.Options.SmokePuffingIncrease)
     else
         local smoothFactor = self.Options.SmokePuffingDecrease
         if getPlayer():isRunning() or getPlayer():isSprinting() then smoothFactor = self.Options.SmokePuffingDecreaseRunning end
-        print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
+        --print('burnRate: '..truncateToDecimalPlaces(burnRate,4))
         self.smokeItem.burnRate = cubicEaseOut(burnRate, self.Options.SmokeMinBurnLimit*0.95, smoothFactor)
         -- Check if the smoke is 'notLit'
         if self.Options.SmokeRelighting and self.smokeItem.burnRate < self.Options.SmokeMinBurnLimit then

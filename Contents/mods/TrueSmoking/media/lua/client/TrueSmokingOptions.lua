@@ -45,7 +45,7 @@ function TrueSmoking.Options.init()
                 },
                 PassiveSmokingMaxTime = {
                     '10','20','30','40','50','60','70','80','90','100','110','120',
-                    name = 'UI_TrueSmoking_PassiveSmokingMinTime',
+                    name = 'UI_TrueSmoking_PassiveSmokingMaxTime',
                     tooltip = 'UI_TrueSmoking_PassiveSmokingMaxTime_tooltip',
                     default = 4,
                     OnApplyMainMenu = onModOptionsApply,
