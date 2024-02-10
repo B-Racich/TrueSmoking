@@ -30,6 +30,7 @@ function ISEatFoodAction:new (character, item, percentage)
         print('Hooking: '..onEat..' -> '..hook)
         if not TrueSmoking.isSmoking then TrueSmoking:getSmokeInfo(item) end
         TrueSmoking.isSmokeItem = true
+        item:setReplaceOnUse(nil)
         if modOnEat ~= hook then
             item:getModData().modOnEat = onEat
             item:setOnEat(hook)

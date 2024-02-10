@@ -199,6 +199,14 @@ function getStatsDelta(before, after)
     return o
 end
 
+function addItem()
+    local player = getPlayer()
+    local item = TrueSmoking.smokeItem.replaceOnUse
+    if item and item ~= '' then
+        player:getInventory():AddItem(item)
+    end
+end
+
 function checkForMod(mod)
     return getActivatedMods():contains(mod)
 end

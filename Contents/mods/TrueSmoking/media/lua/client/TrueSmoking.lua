@@ -145,7 +145,12 @@ function TrueSmoking:stopSmoking()
         end
     end
 
+    if self.smokeItem.replaceOnUse and self.smokeItem.replaceOnUse ~= '' then
+        addItem()
+    end
+
     self.item = nil
+    self.smokeItem = {}
 
     Events.EveryOneMinute.Remove(TrueSmoking.smoking)
 end
@@ -162,6 +167,8 @@ function TrueSmoking:getSmokeInfo(item)
     self.smokeItem.unhappyness = item:getUnhappyChange() or 0
     self.smokeItem.fatigue = item:getFatigueChange() or 0
     self.smokeItem.thirst = item:getThirstChange() or 0
+
+    self.smokeItem.replaceOnUse = item:getReplaceOnUseFullType() or ''
 
     local smokeLength = item:getModData().SmokeLength or self.Options.SmokeLength
     local override = self.Options.OverrideSmokeLength
