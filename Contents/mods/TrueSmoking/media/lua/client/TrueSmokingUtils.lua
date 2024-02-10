@@ -14,8 +14,14 @@ end
 function cubicEaseOut(val, tar, percent, stat)
     local t = 1 - percent
     local x = tar + (1 - t^3) * (val - tar)
-    --print('val: ',truncateToDecimalPlaces(val,6),' tar: ',truncateToDecimalPlaces(tar,6),' x: ',truncateToDecimalPlaces(x,6),' %: ',truncateToDecimalPlaces(1-percent,6), ' stat:: ', stat)
+    --debugPrint('val: ',truncateToDecimalPlaces(val,6),' tar: ',truncateToDecimalPlaces(tar,6),' x: ',truncateToDecimalPlaces(x,6),' %: ',truncateToDecimalPlaces(1-percent,6), ' stat:: ', stat)
     return x
+end
+
+function debugPrint(str)
+    if TrueSmoking.Options.DebugPrint or true then
+        print(str)
+    end
 end
 
 function setPlayerStats(player, levels, delta, percent)
@@ -24,14 +30,13 @@ function setPlayerStats(player, levels, delta, percent)
     local body = player:getBodyDamage()
 
     if delta == nil then
-        --print('DELTA NILLLLLLL')
-        --print('stress before:: ',stats:getStress())
-        stats:setStress(levels.stress)
-        --print('stess after::',stats:getStress())
-        body:setUnhappynessLevel(levels.unhappyness)
         --stats:setStressFromCigarettes(levels.stressFromCig)
+        --player:setTimeSinceLastSmoke(levels.timeSinceLastSmoke)
         stats:setStressFromCigarettes(0)
-        player:setTimeSinceLastSmoke(levels.timeSinceLastSmoke)
+        player:setTimeSinceLastSmoke(0)
+        stats:setStress(levels.stress)
+
+        body:setUnhappynessLevel(levels.unhappyness)
         body:setFoodSicknessLevel(levels.foodSick)
         body:setBoredomLevel(levels.boredom)
         stats:setFatigue(levels.fatigue)
@@ -44,6 +49,11 @@ function setPlayerStats(player, levels, delta, percent)
 
         if checkForMod('EvolvingTraitsWorld') then
             player:getModData().EvolvingTraitsWorld.SmokeSystem.SmokingAddiction = levels.ETWaddiction
+        end
+
+        if checkForMod('jiggasGreenfireMod') then
+            --player:getModData().stonedamt = levels.stonedamt
+            --player:getModData().potcount = levels.potcount
         end
     else
         setStatCheck('stress', levels, delta, percent, (function(statChange)
@@ -96,6 +106,15 @@ function setPlayerStats(player, levels, delta, percent)
                 player:getModData().EvolvingTraitsWorld.modData.SmokeSystem.smokerModData.SmokingAddiction = statChange
             end))
         end
+
+        if checkForMod('jiggasGreenfireMod') then
+            --setStatCheck('stonedamt', levels, delta, percent, (function(statChange)
+            --    player:getModData().stonedamt = statChange
+            --end))
+            --setStatCheck('potcount', levels, delta, percent, (function(statChange)
+            --    player:getModData().potcount = statChange
+            --end))
+        end
     end
 end
 
@@ -117,7 +136,13 @@ function setStatCheck(stat, levels, delta, percent, func)
         local statBefore = levels[stat]
         local statAfter = statBefore
         if TrueSmoking.hasSmokerTrait and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' and (stat == 'stress' or stat == 'stressFromCig' or stat == 'timeSinceLastSmoke') then
-            statAfter = cubicEaseOut(levels[stat], 0, percent, stat)
+            if TrueSmoking.smokeItem.isButt then
+                statAfter = cubicEaseOut(levels[stat], levels[stat]*.75, percent, stat)
+            elseif TrueSmoking.smokeItem.isHalf then
+                statAfter = cubicEaseOut(levels[stat],  levels[stat]/2, percent, stat)
+            else
+                statAfter = cubicEaseOut(levels[stat], 0, percent, stat)
+            end
         else
             statAfter = cubicEaseOut(levels[stat], (levels[stat] + delta[stat]), percent, stat)
         end
@@ -127,7 +152,7 @@ function setStatCheck(stat, levels, delta, percent, func)
         local statChange = statAfter-statBefore
 
         func(statAfter)
-        --print('STAT::',stat,' BEFORE::',truncateToDecimalPlaces(levels[stat],6),' DELTA::',truncateToDecimalPlaces(statChange,6),' AFTER::',truncateToDecimalPlaces(statAfter,6))
+        --debugPrint(str = 'STAT::',stat,' BEFORE::',truncateToDecimalPlaces(levels[stat],6),' DELTA::',truncateToDecimalPlaces(statChange,6),' AFTER::',truncateToDecimalPlaces(statAfter,6))
 
         --CHECKS FOR VARIOUS STATS TO ENSURE CHANGES
         if stat == 'stress' and TrueSmoking.smokeItem.onEat == 'OnEat_Cigarettes' then
@@ -157,6 +182,11 @@ function getPlayerStats(player)
 
     if checkForMod('EvolvingTraitsWorld') then
         o.ETWaddiction = player:getModData().EvolvingTraitsWorld.SmokeSystem.SmokingAddiction or 0
+    end
+
+    if checkForMod('jiggasGreenfireMod') then
+        o.stonedamt = player:getModData().stonedamt or 0
+        o.potcount = player:getModData().potcount or 0
     end
 
     return o
@@ -196,7 +226,29 @@ function getStatsDelta(before, after)
     if checkForMod('EvolvingTraitsWorld') then
         o.ETWaddiction = helper('ETWaddiction')
     end
+
+    if checkForMod('jiggasGreenfireMod') then
+        o.stonedamt = helper('stonedamt')
+        o.potcount = helper('potcount')
+    end
+
     return o
+end
+
+function greenFireHalf(fullType)
+    local map = {
+        ['Greenfire.SpaceBlunt'] = 'Greenfire.HalfSpaceBlunt',
+        ['Greenfire.HashBlunt'] = 'Greenfire.HalfHashBlunt',
+        ['Greenfire.KiefBlunt'] = 'Greenfire.HalfKiefBlunt',
+        ['Greenfire.MixedBlunt'] = 'Greenfire.HalfMixedBlunt',
+        ['Greenfire.Blunt'] = 'Greenfire.HalfBlunt',
+        ['Greenfire.Joint'] = 'Greenfire.HalfJoint',
+        ['Greenfire.KiefJoint'] = 'Greenfire.HalfKiefJoint',
+        ['Greenfire.HashJoint'] = 'Greenfire.HalfHashJoint',
+        ['Greenfire.Cigar'] = 'Greenfire.HalfCigar',
+        ['Greenfire.BluntCigar'] = 'Greenfire.HalfBluntCigar',
+    }
+    return map[fullType]
 end
 
 function addItem()

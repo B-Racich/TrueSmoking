@@ -15,7 +15,6 @@ function TrueSmoking:startSmoking()
         self.panicReductionBeforeSmoking = getPlayer():getBodyDamage():getPanicReductionValue()
         getPlayer():getModData().isSmoking = true
         self.puffTimeMark = os.time();
-
         print('smoke event start')
         Events.EveryOneMinute.Add(TrueSmoking.smoking)
     end
@@ -47,6 +46,15 @@ function TrueSmoking.smoking()
                 end
             end
         end
+
+        if getActivatedMods():contains("jiggasGreenfireMod") then
+            if smokeLength <= 0.5 and TrueSmoking.GreenFireSmokeHalf then
+                TrueSmoking:stopSmoking()
+                greenFireCough(getPlayer())
+                return
+            end
+        end
+
         if smokeLength > burnRate then
             TrueSmoking:smoke()
         end
@@ -149,6 +157,11 @@ function TrueSmoking:stopSmoking()
         addItem()
     end
 
+    if getActivatedMods():contains("jiggasGreenfireMod") and self.GreenFireSmokeHalf then
+        self.player:getInventory():AddItem(greenFireHalf(self.item:getFullType()))
+        self.GreenFireSmokeHalf = false
+    end
+
     self.item = nil
     self.smokeItem = {}
 
@@ -170,12 +183,23 @@ function TrueSmoking:getSmokeInfo(item)
 
     self.smokeItem.replaceOnUse = item:getReplaceOnUseFullType() or ''
 
+    self.smokeItem.isButt = string.find(item:getFullType(), 'Butt')
+    self.smokeItem.isHalf = string.find(item:getFullType(), 'Half')
+
     local smokeLength = item:getModData().SmokeLength or self.Options.SmokeLength
     local override = self.Options.OverrideSmokeLength
 
     if override then smokeLength = self.Options.SmokeLength end
     self.smokeItem.smokeLength = smokeLength
-    self.smokeItem.originalSmokeLength = smokeLength
+
+    if self.smokeItem.isButt then
+        self.smokeItem.smokeLength = smokeLength/4
+    end
+    if self.smokeItem.isHalf then
+        self.smokeItem.smokeLength = smokeLength/2
+    end
+
+    self.smokeItem.originalSmokeLength = self.smokeItem.smokeLength
 
     --TODO Add variability here
     self.smokeItem.burnRate = 0.0175
@@ -225,6 +249,7 @@ function TrueSmoking.start()
     TrueSmoking.statsDelta = TrueSmoking.statsDelta or nil
     TrueSmoking.statsBefore = TrueSmoking.statsBefore or nil
     TrueSmoking.statsAfter = TrueSmoking.statsAfter or nil
+    TrueSmoking.GreenFireSmokeHalf = false
 
     TrueSmoking.player = getPlayer()
 

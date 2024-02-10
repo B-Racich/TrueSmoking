@@ -74,7 +74,12 @@ function OnEat_Hook(food, character, percent)
     --Reset stats from original OnEat changes
     if TrueSmoking.isSmokeItem then
         TrueSmoking.isSmokeItem = false
+
         setPlayerStats(character, before)
+        if getActivatedMods():contains('jiggasGreenfireMod') and TrueSmoking.GreenFireSmokeHalf then
+            getPlayer():getInventory():RemoveOneOf(greenFireHalf(TrueSmoking.item:getFullType()))
+        end
+
         TrueSmoking:startSmoking()
     end
 end
